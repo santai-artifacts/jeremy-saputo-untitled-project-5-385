@@ -1468,7 +1468,7 @@
     }
 
     function spawnGlitch() {
-      const count = 3 + Math.floor(Math.random() * 5);
+      const count = 1 + Math.floor(Math.random() * 2);
       for (let i = 0; i < count; i++) {
         const h = Math.random() < 0.4 ? (2 + Math.random() * 3) : (5 + Math.random() * 18);
         const y = Math.random() * 100;
@@ -1476,7 +1476,7 @@
         const line = document.createElement('div');
         line.className = 'glitch-line';
         const color = glitchColors[Math.floor(Math.random() * glitchColors.length)];
-        const dur = 80 + Math.random() * 240;
+        const dur = 240 + Math.random() * 320;
 
         const lineType = Math.random();
         let lineStyle = '';
@@ -1503,8 +1503,8 @@
         glitchContainer.appendChild(line);
 
         requestAnimationFrame(() => {
-          line.style.transition = `opacity ${dur * 0.15}ms ease-in`;
-          line.style.opacity = '1';
+          line.style.transition = `opacity ${dur * 0.4}ms ease-in`;
+          line.style.opacity = '0.4';
         });
 
         setTimeout(() => {
@@ -1514,7 +1514,7 @@
         }, dur * 0.35);
       }
 
-      const next = 150 + Math.random() * 500;
+      const next = 1400 + Math.random() * 2000;
       setTimeout(spawnGlitch, next);
     }
 
