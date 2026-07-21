@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maggie Nelson — Writer</title>
+  <script>
+    /* Apply saved / system theme before first paint to avoid a flash */
+    (function () {
+      try {
+        var saved = localStorage.getItem('mn-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved ? saved === 'dark' : prefersDark) {
+          document.documentElement.classList.add('dark-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400&family=Special+Elite&display=swap" rel="stylesheet">
@@ -21,6 +33,15 @@
       --paper:    #F0E8DA;
       --paper-dark: #E4D9C6;
       --fold:     #D4C9B4;
+      --paper-curl: var(--paper-curl);
+
+      /* RGB triplets so the same alpha reads correctly in either theme.
+         --line  = "ink" hairlines/fills that sit on light surfaces
+         --shadow = darkening (spine, creases, drop-shadows) — stays dark
+         --scanline = CRT scanline tint over the hero */
+      --line-rgb:     43, 35, 24;
+      --shadow-rgb:   43, 35, 24;
+      --scanline-rgb: 0, 0, 0;
 
       --serif:      'EB Garamond', Georgia, serif;
       --mono:       'IBM Plex Mono', 'Courier New', monospace;
@@ -30,6 +51,35 @@
       --t-body:  16px;
       --t-nav:   12px;
       --t-hero:  clamp(80px, 13vw, 200px);
+    }
+
+    /* ── Dark mode ───────────────────────────────────────────────────
+       Warm, layered charcoal that keeps the design's paper/ink feel:
+       page is darkest, feature panels sit a step lighter, book pages
+       become aged dark stock. Hairlines flip to light, shadows stay dark. */
+    html.dark-mode {
+      --bg:         #14110D;
+      --bg-deep:    #0E0C09;
+      --black:      #241E17;
+      --ink:        #ECE6DB;
+      --muted:      #9E9488;
+      --white:      #F3F1EE;
+      --accent:     #FF3D77;
+      --paper:      #262019;
+      --paper-dark: #1E1913;
+      --fold:       #15110C;
+      --paper-curl: #332B22;
+
+      --line-rgb:     236, 230, 222;
+      --shadow-rgb:   0, 0, 0;
+      --scanline-rgb: 255, 255, 255;
+    }
+
+    /* Smooth cross-fade when toggling themes (disabled under reduced-motion) */
+    body, header, .cold-open, #work, .ledger-row, .row-tag, .section-rule,
+    .feature-spread, .feature-left, .book-page, #about, .pill, #contact,
+    footer, .book-title, .book-text, .hero-name, .row-title, .row-desc {
+      transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
     }
 
     html { scroll-behavior: smooth; }
@@ -132,6 +182,40 @@
 
     nav a:hover { color: var(--ink); }
 
+    /* ── Dark-mode toggle — styled as a nav element ──────────────────── */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: 1px solid rgba(var(--line-rgb), 0.2);
+      border-radius: 20px;
+      padding: 5px 12px 5px 11px;
+      font-family: var(--mono);
+      font-size: var(--t-nav);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: none;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .theme-toggle:hover {
+      color: var(--ink);
+      border-color: rgba(var(--line-rgb), 0.45);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .theme-toggle .tt-icon {
+      font-size: 13px;
+      line-height: 1;
+      transform: translateY(-0.5px);
+    }
+
     /* ── Cold open — CRT scanline hero ───────────────────────────── */
     .cold-open {
       height: 100svh;
@@ -154,8 +238,8 @@
         to bottom,
         transparent 0px,
         transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
+        rgba(var(--scanline-rgb),0.03) 2px,
+        rgba(var(--scanline-rgb),0.03) 4px
       );
     }
 
@@ -269,7 +353,7 @@
     .section-rule {
       flex: 1;
       height: 1px;
-      background: rgba(43,35,24,0.12);
+      background: rgba(var(--line-rgb),0.12);
     }
 
     .ledger { width: 100%; }
@@ -279,16 +363,16 @@
       grid-template-columns: 60px 1fr 180px;
       gap: 0 48px;
       padding: 44px 0;
-      border-top: 1px solid rgba(43,35,24,0.1);
+      border-top: 1px solid rgba(var(--line-rgb),0.1);
       position: relative;
     }
 
-    .ledger-row:last-child { border-bottom: 1px solid rgba(43,35,24,0.1); }
+    .ledger-row:last-child { border-bottom: 1px solid rgba(var(--line-rgb),0.1); }
 
     .row-bg {
       position: absolute;
       inset: 0;
-      background: rgba(43,35,24,0.025);
+      background: rgba(var(--line-rgb),0.025);
       opacity: 0;
       transition: opacity 0.2s;
       pointer-events: none;
@@ -359,7 +443,7 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       padding: 3px 11px;
-      border: 1px solid rgba(43,35,24,0.16);
+      border: 1px solid rgba(var(--line-rgb),0.16);
       border-radius: 20px;
       color: var(--muted);
     }
@@ -449,8 +533,8 @@
       max-width: 960px;
       width: 100%;
       position: relative;
-      filter: drop-shadow(0 12px 40px rgba(43,35,24,0.18))
-              drop-shadow(0 2px 8px rgba(43,35,24,0.12));
+      filter: drop-shadow(0 12px 40px rgba(var(--shadow-rgb),0.18))
+              drop-shadow(0 2px 8px rgba(var(--shadow-rgb),0.12));
     }
 
     /* Individual pages */
@@ -478,7 +562,7 @@
       border-radius: 4px 0 0 4px;
       background: linear-gradient(
         to right,
-        #E8DFCE 0%,
+        var(--paper-curl) 0%,
         var(--paper) 5%,
         var(--paper) 90%,
         var(--paper-dark) 100%
@@ -490,7 +574,7 @@
       border-radius: 0 4px 4px 0;
       background: linear-gradient(
         to left,
-        #E8DFCE 0%,
+        var(--paper-curl) 0%,
         var(--paper) 5%,
         var(--paper) 90%,
         var(--paper-dark) 100%
@@ -511,13 +595,13 @@
       background:
         linear-gradient(to right,
           transparent 0%,
-          rgba(43,35,24,0.06) 15%,
-          rgba(43,35,24,0.12) 30%,
-          rgba(43,35,24,0.18) 42%,
+          rgba(var(--shadow-rgb),0.06) 15%,
+          rgba(var(--shadow-rgb),0.12) 30%,
+          rgba(var(--shadow-rgb),0.18) 42%,
           rgba(0,0,0,0.22) 50%,
-          rgba(43,35,24,0.18) 58%,
-          rgba(43,35,24,0.12) 70%,
-          rgba(43,35,24,0.06) 85%,
+          rgba(var(--shadow-rgb),0.18) 58%,
+          rgba(var(--shadow-rgb),0.12) 70%,
+          rgba(var(--shadow-rgb),0.06) 85%,
           transparent 100%
         );
     }
@@ -535,11 +619,11 @@
       background: linear-gradient(
         to right,
         transparent,
-        rgba(43,35,24,0.04) 10%,
-        rgba(43,35,24,0.07) 30%,
-        rgba(43,35,24,0.04) 50%,
-        rgba(43,35,24,0.07) 70%,
-        rgba(43,35,24,0.04) 90%,
+        rgba(var(--shadow-rgb),0.04) 10%,
+        rgba(var(--shadow-rgb),0.07) 30%,
+        rgba(var(--shadow-rgb),0.04) 50%,
+        rgba(var(--shadow-rgb),0.07) 70%,
+        rgba(var(--shadow-rgb),0.04) 90%,
         transparent
       );
     }
@@ -642,7 +726,7 @@
       font-family: var(--serif);
       font-size: 15.5px;
       line-height: 1.72;
-      color: rgba(43,35,24,0.72);
+      color: rgba(var(--line-rgb),0.72);
       position: relative;
       z-index: 5;
       text-align: justify;
@@ -670,8 +754,8 @@
       color: var(--ink);
       margin: 24px 0;
       padding: 20px 0;
-      border-top: 1px solid rgba(43,35,24,0.12);
-      border-bottom: 1px solid rgba(43,35,24,0.12);
+      border-top: 1px solid rgba(var(--line-rgb),0.12);
+      border-bottom: 1px solid rgba(var(--line-rgb),0.12);
       position: relative;
       z-index: 5;
     }
@@ -841,7 +925,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       padding: 16px 30px;
-      border: 1px solid rgba(43,35,24,0.2);
+      border: 1px solid rgba(var(--line-rgb),0.2);
       border-radius: 36px;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
@@ -931,11 +1015,11 @@
       .book-page { min-height: auto; }
       .book-page-left {
         border-radius: 4px 4px 0 0;
-        background: linear-gradient(to bottom, #E8DFCE 0%, var(--paper) 5%, var(--paper) 100%);
+        background: linear-gradient(to bottom, var(--paper-curl) 0%, var(--paper) 5%, var(--paper) 100%);
       }
       .book-page-right {
         border-radius: 0 0 4px 4px;
-        background: linear-gradient(to top, #E8DFCE 0%, var(--paper) 5%, var(--paper) 100%);
+        background: linear-gradient(to top, var(--paper-curl) 0%, var(--paper) 5%, var(--paper) 100%);
       }
       .book::after {
         left: 0;
@@ -945,13 +1029,13 @@
         height: 48px;
         background: linear-gradient(to bottom,
           transparent 0%,
-          rgba(43,35,24,0.06) 15%,
-          rgba(43,35,24,0.12) 30%,
-          rgba(43,35,24,0.18) 42%,
+          rgba(var(--shadow-rgb),0.06) 15%,
+          rgba(var(--shadow-rgb),0.12) 30%,
+          rgba(var(--shadow-rgb),0.18) 42%,
           rgba(0,0,0,0.22) 50%,
-          rgba(43,35,24,0.18) 58%,
-          rgba(43,35,24,0.12) 70%,
-          rgba(43,35,24,0.06) 85%,
+          rgba(var(--shadow-rgb),0.18) 58%,
+          rgba(var(--shadow-rgb),0.12) 70%,
+          rgba(var(--shadow-rgb),0.06) 85%,
           transparent 100%
         );
       }
@@ -969,6 +1053,11 @@
       .contact-grid { grid-template-columns: 1fr; gap: 56px; }
 
       footer { padding: 20px 24px; }
+    }
+
+    @media (max-width: 560px) {
+      .theme-toggle .tt-label { display: none; }
+      .theme-toggle { padding: 5px 9px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -989,6 +1078,9 @@
       <a href="#work">Work</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <span class="tt-icon" aria-hidden="true">☀</span><span class="tt-label">Light</span>
+      </button>
     </nav>
   </header>
 
@@ -1274,6 +1366,32 @@
   </footer>
 
   <script>
+    /* ── Dark-mode toggle ──────────────────────────────────────────── */
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var icon = btn.querySelector('.tt-icon');
+      var label = btn.querySelector('.tt-label');
+
+      function sync() {
+        var dark = root.classList.contains('dark-mode');
+        icon.textContent = dark ? '☾' : '☀';
+        label.textContent = dark ? 'Dark' : 'Light';
+        btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+      sync();
+
+      btn.addEventListener('click', function () {
+        root.classList.toggle('dark-mode');
+        try {
+          localStorage.setItem('mn-theme', root.classList.contains('dark-mode') ? 'dark' : 'light');
+        } catch (e) {}
+        sync();
+      });
+    })();
+
     /* Live clock */
     function tick() {
       const n = new Date(), p = v => String(v).padStart(2, '0');
